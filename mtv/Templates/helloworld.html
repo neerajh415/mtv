@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+<title>Page Title</title>
+<script type='text/javascript' src="{% static "script1.js" %}"></script>
+<script type='text/javascript' src="{% static "script2.js" %}"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type = "text/javascript" language = "javascript">
+$(document).ready(function() {
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+$('#country').change(function () {
+//$('select').change(function () {
+        var statusVal = $(this).val();
+        var job_id = $(this).children(":selected").attr('id');
+        var csrftoken = getCookie('csrftoken')
+        $.ajax({
+                 type: "POST",
+                 url: "http://localhost:8000/twowheeler/api/cities/",
+                 data: { statusType : statusVal, jobID: job_id, 'csrfmiddlewaretoken': csrftoken},
+                 success: function(msg) {
+                     $('#country').text(msg);
+                 }
+      })
+  });
+});
+
+
+</script>
+</head>
+<body>
+<select id="country">
+    {% for country in countries %}
+    <option>Countries</option>
+    <option id={{country.id}}>{{country}}</option>
+    {% endfor %}
+</select>
+<h1>This is a Heading</h1>
+
+
+<p>This is a paragraph.</p>
+<select id="cities">
+    {% for city in cities %}
+    <option>City</option>
+    <option id={{city.id}}>{{city}}</option>
+    {% endfor %}
+</select>
+
+
+</body>
+</html>
